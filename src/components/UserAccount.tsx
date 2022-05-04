@@ -4,45 +4,57 @@ import {
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalFooter,
     ModalHeader,
     ModalOverlay,
-
 } from '@chakra-ui/react'
 import React from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { BiChevronLeft } from 'react-icons/bi'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import LogIn from './LogIn'
+import Email from './LoginMethods/Email'
+import NewProfile from './LoginMethods/NewProfile'
+import SignUp from './SignUp'
 interface ModalProps {
     isOpen: boolean
     onClose: () => void
 }
-import LogIn from './LogIn'
-import SignUp from './SignUp'
-import { Route, Routes } from 'react-router-dom'
-import Email from './LoginMethods/Email';
-import { BiChevronLeft } from "react-icons/bi";
 
 const UserAccount: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const navigate = useNavigate()
+    const location = useLocation()
+    const { currentUser } = useAuth()!
 
-    React.useEffect(() => {
-        
-    }, [location]);
+    React.useEffect(() => {}, [location])
 
     return (
         <>
-
-
-            <Modal isOpen={isOpen} onClose={onClose} size='xl'>
+            <Modal isOpen={isOpen} onClose={onClose} size="xl">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>{location.pathname === '/loginEmail' && <Button size='xs' onClick={() => navigate(-1)} bg='none' _hover={{bg:'none'}}> <BiChevronLeft fontSize='2rem' /></Button>}</ModalHeader>
+                    <ModalHeader>
+                        {location.pathname === '/loginEmail' && (
+                            <Button
+                                size="xs"
+                                onClick={() => navigate(-1)}
+                                bg="none"
+                                _hover={{ bg: 'none' }}
+                            >
+                                {' '}
+                                <BiChevronLeft fontSize="2rem" />
+                            </Button>
+                        )}
+                    </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Routes>
                             <Route path="/" element={<LogIn />} />
                             <Route path="/signup" element={<SignUp />} />
                             <Route path="/loginEmail" element={<Email />} />
+                            <Route
+                                path="/new-profile"
+                                element={<NewProfile />}
+                            />
                         </Routes>
                     </ModalBody>
                 </ModalContent>

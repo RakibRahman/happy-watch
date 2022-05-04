@@ -1,8 +1,13 @@
 // Import the functions you need from the SDKs you need
-import { getAuth,GoogleAuthProvider } from 'firebase/auth'
+import {
+    getAuth,
+    GoogleAuthProvider,
+    FacebookAuthProvider,
+} from 'firebase/auth'
 import firebase from 'firebase/compat/app'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+import 'firebase/compat/firestore'
 
 const firebaseConfig = {
     apiKey: 'AIzaSyAv6D5m_Jcu7jdttARBcO9rxaZwXVo_n-4',
@@ -17,10 +22,19 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig)
 
 const fbAuth = getAuth(app)
-const fbFireStore = getFirestore(app)
+const fbFireStore = firebase.firestore()
 const fbStorage = getStorage(app)
 const googleAuth = new GoogleAuthProvider()
-// const fbTimestamp = firebase.firestore.FieldValue.serverTimestamp()
-// const increment = firebase.firestore.FieldValue.increment
+const facebookAuth = new FacebookAuthProvider()
+const fbTimestamp = firebase.firestore.FieldValue.serverTimestamp()
+const increment = firebase.firestore.FieldValue.increment
 
-export {  googleAuth, fbAuth, fbStorage, fbFireStore }
+export {
+    fbTimestamp,
+    increment,
+    googleAuth,
+    fbAuth,
+    fbStorage,
+    fbFireStore,
+    facebookAuth,
+}

@@ -13,11 +13,11 @@ import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import UserAccount from './UserAccount'
 const Navbar = () => {
-    const {  signOutUser,user } = useAuth()!
+    const { signOutUser, user } = useAuth()!
     const { isOpen, onOpen, onClose } = useDisclosure()
-useEffect(()=>{
-console.log(user)
-},[user])
+    useEffect(() => {
+       
+    }, [user])
     return (
         <>
             <Flex
@@ -74,9 +74,15 @@ console.log(user)
                             Sign Out
                         </Button>
                     )}
-                    {user && <Image src={user?.photoURL} w='30px' h='30px' objectFit='cover' />}
+                    {user && (
+                        <Image
+                            src={user?.photoURL}
+                            w="30px"
+                            h="30px"
+                            objectFit="cover"
+                        />
+                    )}
                     <Text>{user ? user.userName : ''}</Text>
-
                 </Flex>
             </Flex>
             <UserAccount isOpen={isOpen} onClose={onClose} />

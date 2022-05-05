@@ -5,33 +5,33 @@ import {
     FormLabel,
     Input,
     Text,
-    useToast,
+    useToast
 } from '@chakra-ui/react'
-import React, { useEffect, useState, FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { fbFireStore } from '../../lib/firebase'
-import { theme } from '../../utils/theme';
-import { useNavigate } from 'react-router-dom';
-import { ModalProps } from '../../utils/types';
+import { theme } from '../../utils/theme'
+import { ModalProps } from '../../utils/types'
 
 const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
     // const { currentUser } = useAuth()!
-    const [userName, setUserName] = useState<string | undefined>('');
-    const [isTaken, setIsTaken] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const toast = useToast();
-    const navigate = useNavigate();
+    const [userName, setUserName] = useState<string | undefined>('')
+    const [isTaken, setIsTaken] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const toast = useToast()
+    const navigate = useNavigate()
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value
-        setUserName(value)
-    }
+        const value = e.target.value;
+        setUserName(value);
+    };
 
     useEffect(() => {
         if (currentUser) {
             const defaultUserName = currentUser.displayName?.replace(/\s/g, '')
-            setUserName(defaultUserName)
+            setUserName(defaultUserName);
         }
-    }, [currentUser])
+    }, [currentUser]);
 
     useEffect(() => {
         const uName = userName?.replace(/\s/g, '')
@@ -40,44 +40,44 @@ const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
         const checkUserName = async () => {
             const ref = fbFireStore.doc(`usernames/@${userName}`)
             const { exists } = await ref.get()
-
-            setIsTaken(exists)
+            setIsTaken(exists);
         }
         if (uNameCondition) {
             checkUserName()
         }
-    }, [userName])
+    }, [userName]);
 
     const submitHandler = async (e: React.FormEvent) => {
         e.preventDefault()
-        const { uid, displayName, photoURL } = currentUser!;
-        const uName = `@${userName?.replace(/\s/g, '')}`;
-
+        const { uid, displayName, photoURL } = currentUser!
+        const uName = `@${userName?.replace(/\s/g, '')}`
 
         if (userName && userName?.length < 3) {
             toast({
                 title: 'UserName must be 3 characters long',
                 status: 'error',
             })
-            return;
+            return
         } else if (userName && userName?.length > 20) {
             toast({
                 title: 'UserName is crossing 20 characters limit',
                 status: 'error',
             })
-            return;
+            return
         }
         try {
-            setLoading(true);
+            setLoading(true)
             await fbFireStore.doc(`users/${uid}`).set({
                 userName: uName,
                 uid,
-                photoURL,
-                displayName
-            });
-            await fbFireStore.doc(`usernames/${uName}`).set({ uid });
-            navigate('/');
-            onClose();
+                photoURL: photoURL
+                    ? photoURL
+                    : `https://picsum.photos/200/300/?blur`,
+                displayName: displayName ? displayName : uName,
+            })
+            await fbFireStore.doc(`usernames/${uName}`).set({ uid })
+            navigate('/')
+            onClose()
             toast({
                 title: 'Account successfully created',
                 status: 'success',
@@ -88,7 +88,7 @@ const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
                 status: 'error',
             })
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
@@ -109,13 +109,13 @@ const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
             <Button
                 disabled={isTaken}
                 isLoading={loading}
-                loadingText='Signing up...'
+                loadingText="Signing up..."
                 bg={theme.colorRed}
                 color={theme.colorWhite}
                 type="submit"
                 _hover={{
                     // bg:'none',
-                    opacity:1
+                    opacity: 1,
                 }}
             >
                 Sign Up

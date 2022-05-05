@@ -1,19 +1,10 @@
-import {
-    Text,
-    Heading,
-    Box,
-    Stack,
-    Input,
-    InputLeftAddon,
-    InputGroup,
-    Flex,
-} from '@chakra-ui/react'
+import { Box, Flex, Heading, Stack, Text } from '@chakra-ui/react'
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { theme } from '../utils/theme'
 import { FcGoogle } from 'react-icons/fc'
-import { RiUserLine, RiFacebookBoxFill } from 'react-icons/ri'
+import { RiUserLine } from 'react-icons/ri'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { theme } from '../utils/theme'
 
 const LogIn: React.FC = () => {
     const styles = {
@@ -24,14 +15,14 @@ const LogIn: React.FC = () => {
         fontSize: '1.5rem',
         height: '100%',
         fontWeight: 'bold',
-        iconStyle: {
+        iconstyle: {
             fontSize: '2rem',
             p: 4,
             mr: 35,
             borderRight: '1px solid gray',
         },
     }
-    const { logInWithGoogle,logInWithFacebook } = useAuth()!
+    const { logInWithGoogle } = useAuth()!
     return (
         <Box textAlign="center">
             <Heading size="lg">Log In To HappyWatch</Heading>
@@ -41,7 +32,7 @@ const LogIn: React.FC = () => {
           <Input type='tel' placeholder='phone number' />
         </InputGroup> */}
                 <Flex {...styles}>
-                    <Box {...styles.iconStyle}>
+                    <Box {...styles.iconstyle}>
                         {' '}
                         <RiUserLine />
                     </Box>
@@ -51,23 +42,23 @@ const LogIn: React.FC = () => {
                     </Link>
                 </Flex>
                 <Flex {...styles}>
-                    <Box {...styles.iconStyle}>
+                    <Box {...styles.iconstyle}>
                         <FcGoogle />
                     </Box>
                     <Text cursor="pointer" onClick={logInWithGoogle}>
                         Continue With Google
                     </Text>
                 </Flex>
-                <Flex {...styles}>
-                    <Box {...styles.iconStyle}>
+                {/* <Flex {...styles}>
+                    <Box {...styles.iconstyle}>
                         <RiFacebookBoxFill color="#0676E8" />
                     </Box>
                     <Text cursor="pointer" onClick={logInWithFacebook}>Continue With Facebook</Text>
-                </Flex>
+                </Flex> */}
             </Stack>
             <Link to="/signup">
                 <Text>
-                    Does Not have any action yet?{' '}
+                    Does not have any account yet?{' '}
                     <Text fontWeight="bold" as="span" color={theme.colorRed}>
                         Sign Up
                     </Text>

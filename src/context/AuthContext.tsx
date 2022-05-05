@@ -1,7 +1,13 @@
-import { signInWithPopup, signOut, signInWithRedirect } from 'firebase/auth'
+import { useToast } from '@chakra-ui/react'
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+} from 'firebase/auth'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fbAuth, googleAuth, fbFireStore,facebookAuth } from '../lib/firebase'
+import { facebookAuth, fbAuth, fbFireStore, googleAuth } from '../lib/firebase'
 import { AuthContextInterface, CurrentUser } from '../utils/types'
 
 const AuthContext = createContext({} as AuthContextInterface)
@@ -16,6 +22,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     let navigate = useNavigate()
+    const toast = useToast()
     let dbRef = fbFireStore.collection('usernames')
 
     const checkUserName = async (uid: string) => {
@@ -28,16 +35,75 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         } else {
             console.log('old user')
             // alert('user already exists')
-               navigate('/');
+            navigate('/')
+            toast({
+                title: 'Log In Successful!',
+                status: 'success',
+            })
         }
     }
 
     const logInWithGoogle = async () => {
         return signInWithPopup(fbAuth, googleAuth)
             .then((result) => {
-               
                 const user = result.user
-               
+
+                const { uid } = user
+                if (user) {
+                    checkUserName(uid)
+                }
+            })
+            .catch((error) => {
+                const errorMessage = error.message
+                toast({
+                    title: errorMessage,
+                    status: 'error',
+                })
+            })
+    }
+
+    const accountWithEmail = (email: string, password: string) => {
+        return createUserWithEmailAndPassword(fbAuth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user
+                if (user) {
+                    checkUserName(user.uid)
+                }
+            })
+            .catch((error) => {
+                const errorMessage = error.message
+                toast({
+                    title: errorMessage,
+                    status: 'error',
+                })
+            })
+    }
+
+    const logInWithEmail = (email: string, password: string) => {
+        return signInWithEmailAndPassword(fbAuth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user
+                if (user) {
+                    checkUserName(user.uid)
+                }
+                // ...
+            })
+            .catch((error) => {
+                const errorMessage = error.message
+
+                toast({
+                    title: errorMessage,
+                    status: 'error',
+                })
+            })
+    }
+
+    const logInWithFacebook = async () => {
+        return signInWithPopup(fbAuth, facebookAuth)
+            .then((result) => {
+                const user = result.user
+                console.log(user)
                 const { uid } = user
                 if (user) {
                     checkUserName(uid)
@@ -48,57 +114,46 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
                 setError(errorMessage)
                 // ...
             })
-    };
-    const logInWithFacebook = async () => {
-        return signInWithRedirect(fbAuth, facebookAuth)
-            .then((result) => {
-               
-                // const user = result.user
-               console.log(result)
-                // const { uid } = user
-                // if (user) {
-                //     checkUserName(uid)
-                // }
-            })
-            .catch((error) => {
-                const errorMessage = error.message
-                setError(errorMessage)
-                // ...
-            })
     }
     const signOutUser = () => {
         signOut(fbAuth)
             .then(() => {
-                console.log('// Sign-out successful.')
+                toast({
+                    title: 'Sign-out successful',
+                    status: 'success',
+                })
                 navigate('/')
-                setUser(null);
+                setUser(null)
             })
             .catch((error) => {
-                // An error happened.
+                toast({
+                    title: error.error.message,
+                    status: 'error',
+                })
             })
     }
 
     React.useEffect(() => {
         const unsubscribe = fbAuth.onAuthStateChanged((user) => {
-            setCurrentUser(user);
+            setCurrentUser(user)
             //FIXME: memory leak issue
             //stores information about current logged userPass
             setLoading(false)
-            if(user){
-                const ref = fbFireStore.doc(`users/${user.uid}`);
+            if (user) {
+                const ref = fbFireStore.doc(`users/${user.uid}`)
                 ref.get().then((doc) => {
-                    if(doc.exists){
+                    if (doc.exists) {
                         setUser({
-                            id:doc.id,
-                            ref:doc.ref,
-                            ...doc.data()
+                            id: doc.id,
+                            ref: doc.ref,
+                            ...doc.data(),
                         })
                     }
                 })
             }
         })
 
-        return () => unsubscribe();
+        return () => unsubscribe()
     }, [])
     const values = {
         currentUser,
@@ -108,6 +163,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         signOutUser,
         loading,
         error,
+        accountWithEmail,
+        logInWithEmail,
     }
     return (
         <AuthContext.Provider value={values}>{children}</AuthContext.Provider>

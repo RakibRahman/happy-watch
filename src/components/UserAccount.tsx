@@ -5,14 +5,15 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalHeader,
-    ModalOverlay,
+    ModalOverlay
 } from '@chakra-ui/react'
 import React from 'react'
 import { BiChevronLeft } from 'react-icons/bi'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import LogIn from './LogIn'
-import Email from './LoginMethods/Email'
+import EmailLogIn from './LoginMethods/EmailLogIn'
+import EmailSignUp from './LoginMethods/EmailSignUp'
 import NewProfile from './LoginMethods/NewProfile'
 import SignUp from './SignUp'
 interface ModalProps {
@@ -23,14 +24,14 @@ interface ModalProps {
 const UserAccount: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const { currentUser,user } = useAuth()!
+    const { currentUser, user } = useAuth()!
 
     React.useEffect(() => {
-        if(user){
-            onClose();
+        if (user) {
+            onClose()
             // navigate('/');
         }
-    }, [location,user])
+    }, [location, user])
 
     return (
         <>
@@ -55,10 +56,22 @@ const UserAccount: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                         <Routes>
                             <Route path="/" element={<LogIn />} />
                             <Route path="/signup" element={<SignUp />} />
-                            <Route path="/loginEmail" element={<Email />} />
+                            <Route
+                                path="/sginupEmail"
+                                element={<EmailSignUp />}
+                            />
+                            <Route
+                                path="/loginEmail"
+                                element={<EmailLogIn />}
+                            />
                             <Route
                                 path="/new-profile"
-                                element={<NewProfile currentUser={currentUser} onClose={onClose} />}
+                                element={
+                                    <NewProfile
+                                        currentUser={currentUser}
+                                        onClose={onClose}
+                                    />
+                                }
                             />
                         </Routes>
                     </ModalBody>

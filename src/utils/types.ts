@@ -8,16 +8,18 @@ export interface Props {
 export type CurrentUser = FirebaseUser | null
 
 export interface AuthContextInterface {
-    currentUser: CurrentUser,
-    user:any,
+    currentUser: CurrentUser
+    user: any
     error: string
     loading: boolean
     logInWithGoogle: () => void
     logInWithFacebook: () => void
     signOutUser: () => void
+    accountWithEmail: (email: string, password: string) => void
+    logInWithEmail: (email: string, password: string) => void
 }
 
-export interface ModalProps{
-    onClose:()=>void,
-    currentUser:CurrentUser
+export interface ModalProps {
+    onClose: () => void
+    currentUser: CurrentUser
 }

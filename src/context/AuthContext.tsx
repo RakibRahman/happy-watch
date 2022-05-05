@@ -1,7 +1,7 @@
-import { signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth'
+import { signInWithPopup, signOut, signInWithRedirect } from 'firebase/auth'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fbAuth, googleAuth, fbFireStore } from '../lib/firebase'
+import { fbAuth, googleAuth, fbFireStore,facebookAuth } from '../lib/firebase'
 import { AuthContextInterface, CurrentUser } from '../utils/types'
 
 const AuthContext = createContext({} as AuthContextInterface)
@@ -12,11 +12,11 @@ export function useAuth() {
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [currentUser, setCurrentUser] = useState<CurrentUser>(null)
-    const [newUser, setNewUser] = useState<boolean | null>(null)
+    const [user, setUser] = useState<any | null>(null)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     let navigate = useNavigate()
-    let dbRef = fbFireStore.collection(' usernames')
+    let dbRef = fbFireStore.collection('usernames')
 
     const checkUserName = async (uid: string) => {
         const userNameRef = dbRef.where('uid', '==', uid)
@@ -27,36 +27,41 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
             navigate('/new-profile')
         } else {
             console.log('old user')
+            // alert('user already exists')
+               navigate('/');
         }
-        //    navigate('/');
     }
 
     const logInWithGoogle = async () => {
-        console.log('object')
         return signInWithPopup(fbAuth, googleAuth)
             .then((result) => {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const credential =
-                    GoogleAuthProvider.credentialFromResult(result)
-                const token = credential?.accessToken
-                // The signed-in user info.
+               
                 const user = result.user
-                // setCurrentUser(user);
-                // ...
-                const { uid, displayName, photoURL } = user
+               
+                const { uid } = user
                 if (user) {
                     checkUserName(uid)
-                    console.log(uid, displayName, photoURL)
                 }
             })
             .catch((error) => {
-                // Handle Errors here.
-                const errorCode = error.code
                 const errorMessage = error.message
-                // The email of the user's account used.
-                const email = error.email
-                // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error)
+                setError(errorMessage)
+                // ...
+            })
+    };
+    const logInWithFacebook = async () => {
+        return signInWithRedirect(fbAuth, facebookAuth)
+            .then((result) => {
+               
+                // const user = result.user
+               console.log(result)
+                // const { uid } = user
+                // if (user) {
+                //     checkUserName(uid)
+                // }
+            })
+            .catch((error) => {
+                const errorMessage = error.message
                 setError(errorMessage)
                 // ...
             })
@@ -66,6 +71,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
             .then(() => {
                 console.log('// Sign-out successful.')
                 navigate('/')
+                setUser(null);
             })
             .catch((error) => {
                 // An error happened.
@@ -74,17 +80,31 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     React.useEffect(() => {
         const unsubscribe = fbAuth.onAuthStateChanged((user) => {
-            setCurrentUser(user)
+            setCurrentUser(user);
             //FIXME: memory leak issue
             //stores information about current logged userPass
             setLoading(false)
+            if(user){
+                const ref = fbFireStore.doc(`users/${user.uid}`);
+                ref.get().then((doc) => {
+                    if(doc.exists){
+                        setUser({
+                            id:doc.id,
+                            ref:doc.ref,
+                            ...doc.data()
+                        })
+                    }
+                })
+            }
         })
 
-        return () => unsubscribe()
+        return () => unsubscribe();
     }, [])
     const values = {
         currentUser,
+        user,
         logInWithGoogle,
+        logInWithFacebook,
         signOutUser,
         loading,
         error,

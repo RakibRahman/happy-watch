@@ -31,7 +31,7 @@ const SignUp = () => {
             borderRight: '1px solid gray',
         },
     }
-    const { logInWithGoogle } = useAuth()!
+    const { logInWithGoogle,logInWithFacebook } = useAuth()!
     return (
         <>
             <Stack my={5} spacing="10px">
@@ -61,7 +61,7 @@ const SignUp = () => {
                     <Box {...styles.iconStyle}>
                         <RiFacebookBoxFill color="#0676E8" />
                     </Box>
-                    <Text cursor="pointer">Continue With Facebook</Text>
+                    <Text cursor="pointer" onClick={logInWithFacebook}>Continue With Facebook</Text>
                 </Flex>
             </Stack>
             <Link to="/">

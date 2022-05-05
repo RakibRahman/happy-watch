@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     Button,
     Flex,
@@ -13,9 +13,11 @@ import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import UserAccount from './UserAccount'
 const Navbar = () => {
-    const { currentUser, signOutUser } = useAuth()!
+    const {  signOutUser,user } = useAuth()!
     const { isOpen, onOpen, onClose } = useDisclosure()
-
+useEffect(()=>{
+console.log(user)
+},[user])
     return (
         <>
             <Flex
@@ -43,7 +45,7 @@ const Navbar = () => {
                 >
                     <Text fontWeight="bold">Upload</Text>
 
-                    {!currentUser && (
+                    {!user && (
                         <Button
                             onClick={() => {
                                 onOpen()
@@ -59,7 +61,7 @@ const Navbar = () => {
                             Log In
                         </Button>
                     )}
-                    {currentUser && (
+                    {user && (
                         <Button
                             onClick={signOutUser}
                             _hover={{
@@ -72,7 +74,9 @@ const Navbar = () => {
                             Sign Out
                         </Button>
                     )}
-                    <Text>{currentUser ? currentUser.displayName : ''}</Text>
+                    {user && <Image src={user?.photoURL} w='30px' h='30px' objectFit='cover' />}
+                    <Text>{user ? user.userName : ''}</Text>
+
                 </Flex>
             </Flex>
             <UserAccount isOpen={isOpen} onClose={onClose} />

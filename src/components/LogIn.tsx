@@ -31,7 +31,7 @@ const LogIn: React.FC = () => {
             borderRight: '1px solid gray',
         },
     }
-    const { logInWithGoogle } = useAuth()!
+    const { logInWithGoogle,logInWithFacebook } = useAuth()!
     return (
         <Box textAlign="center">
             <Heading size="lg">Log In To HappyWatch</Heading>
@@ -62,7 +62,7 @@ const LogIn: React.FC = () => {
                     <Box {...styles.iconStyle}>
                         <RiFacebookBoxFill color="#0676E8" />
                     </Box>
-                    <Text cursor="pointer">Use Facebook</Text>
+                    <Text cursor="pointer" onClick={logInWithFacebook}>Continue With Facebook</Text>
                 </Flex>
             </Stack>
             <Link to="/signup">

@@ -23,9 +23,14 @@ interface ModalProps {
 const UserAccount: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const { currentUser } = useAuth()!
+    const { currentUser,user } = useAuth()!
 
-    React.useEffect(() => {}, [location])
+    React.useEffect(() => {
+        if(user){
+            onClose();
+            // navigate('/');
+        }
+    }, [location,user])
 
     return (
         <>
@@ -53,7 +58,7 @@ const UserAccount: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                             <Route path="/loginEmail" element={<Email />} />
                             <Route
                                 path="/new-profile"
-                                element={<NewProfile />}
+                                element={<NewProfile currentUser={currentUser} onClose={onClose} />}
                             />
                         </Routes>
                     </ModalBody>

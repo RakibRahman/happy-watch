@@ -7,16 +7,19 @@ import {
     Text,
     useToast,
 } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
+import React, { useEffect, useState, FC } from 'react'
 import { fbFireStore } from '../../lib/firebase'
-import { theme } from '../../utils/theme'
+import { theme } from '../../utils/theme';
+import { useNavigate } from 'react-router-dom';
+import { ModalProps } from '../../utils/types';
 
-const NewProfile = () => {
-    const { currentUser } = useAuth()!
-    const [userName, setUserName] = useState<string | undefined>('')
-    const [isTaken, setIsTaken] = useState(false)
-    const toast = useToast()
+const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
+    // const { currentUser } = useAuth()!
+    const [userName, setUserName] = useState<string | undefined>('');
+    const [isTaken, setIsTaken] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const toast = useToast();
+    const navigate = useNavigate();
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -35,7 +38,7 @@ const NewProfile = () => {
         const uNameCondition = uName && uName.length >= 3 && uName.length < 20
 
         const checkUserName = async () => {
-            const ref = fbFireStore.doc(` usernames/@${userName}`)
+            const ref = fbFireStore.doc(`usernames/@${userName}`)
             const { exists } = await ref.get()
 
             setIsTaken(exists)
@@ -45,20 +48,47 @@ const NewProfile = () => {
         }
     }, [userName])
 
-    const submitHandler = (e: React.FormEvent) => {
+    const submitHandler = async (e: React.FormEvent) => {
         e.preventDefault()
-        const { uid, displayName, photoURL } = currentUser!
+        const { uid, displayName, photoURL } = currentUser!;
+        const uName = `@${userName?.replace(/\s/g, '')}`;
+
 
         if (userName && userName?.length < 3) {
             toast({
                 title: 'UserName must be 3 characters long',
                 status: 'error',
             })
+            return;
         } else if (userName && userName?.length > 20) {
             toast({
                 title: 'UserName is crossing 20 characters limit',
                 status: 'error',
             })
+            return;
+        }
+        try {
+            setLoading(true);
+            await fbFireStore.doc(`users/${uid}`).set({
+                userName: uName,
+                uid,
+                photoURL,
+                displayName
+            });
+            await fbFireStore.doc(`usernames/${uName}`).set({ uid });
+            navigate('/');
+            onClose();
+            toast({
+                title: 'Account successfully created',
+                status: 'success',
+            })
+        } catch (error) {
+            toast({
+                title: JSON.stringify(error),
+                status: 'error',
+            })
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -78,9 +108,15 @@ const NewProfile = () => {
             </FormControl>
             <Button
                 disabled={isTaken}
+                isLoading={loading}
+                loadingText='Signing up...'
                 bg={theme.colorRed}
                 color={theme.colorWhite}
                 type="submit"
+                _hover={{
+                    // bg:'none',
+                    opacity:1
+                }}
             >
                 Sign Up
             </Button>

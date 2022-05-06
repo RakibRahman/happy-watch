@@ -5,7 +5,7 @@ import {
     FormLabel,
     Input,
     Text,
-    useToast
+    useToast,
 } from '@chakra-ui/react'
 import React, { FC, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -22,16 +22,16 @@ const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
     const navigate = useNavigate()
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setUserName(value);
-    };
+        const value = e.target.value
+        setUserName(value)
+    }
 
     useEffect(() => {
         if (currentUser) {
             const defaultUserName = currentUser.displayName?.replace(/\s/g, '')
-            setUserName(defaultUserName);
+            setUserName(defaultUserName)
         }
-    }, [currentUser]);
+    }, [currentUser])
 
     useEffect(() => {
         const uName = userName?.replace(/\s/g, '')
@@ -40,12 +40,12 @@ const NewProfile: FC<ModalProps> = ({ currentUser, onClose }) => {
         const checkUserName = async () => {
             const ref = fbFireStore.doc(`usernames/@${userName}`)
             const { exists } = await ref.get()
-            setIsTaken(exists);
+            setIsTaken(exists)
         }
         if (uNameCondition) {
             checkUserName()
         }
-    }, [userName]);
+    }, [userName])
 
     const submitHandler = async (e: React.FormEvent) => {
         e.preventDefault()

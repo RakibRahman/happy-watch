@@ -1,23 +1,42 @@
-import React, { useEffect } from 'react'
 import {
     Button,
     Flex,
-    Text,
     Image,
     Input,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuItem,
+    MenuList,
+    Text,
     useDisclosure,
 } from '@chakra-ui/react'
+import React, { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo-black.svg'
-import { theme } from '../utils/theme'
 import { useAuth } from '../context/AuthContext'
-import { Link } from 'react-router-dom'
+import { theme } from '../utils/theme'
 import UserAccount from './UserAccount'
 const Navbar = () => {
-    const { signOutUser, user } = useAuth()!
+    const { user, signOutUser } = useAuth()!
     const { isOpen, onOpen, onClose } = useDisclosure()
-    useEffect(() => {
-       
-    }, [user])
+    const {
+        isOpen: isOpenMenu,
+        onOpen: onOpenMenu,
+        onClose: onCloseMenu,
+    } = useDisclosure()
+    const navigate = useNavigate()
+
+    useEffect(() => {}, [user])
+
+    const handleUpload = () => {
+        if (user) {
+            navigate('/upload')
+        } else {
+            onOpen()
+        }
+    }
+
     return (
         <>
             <Flex
@@ -43,46 +62,51 @@ const Navbar = () => {
                     gap={3}
                     cursor="pointer"
                 >
-                    <Text fontWeight="bold">Upload</Text>
+                    <Text fontWeight="bold" onClick={handleUpload}>
+                        Upload
+                    </Text>
 
                     {!user && (
                         <Button
+                        py={5} px={10}
+                        size='sm'
                             onClick={() => {
                                 onOpen()
-                                console.log('first')
                             }}
                             _hover={{
                                 opacity: 1,
                             }}
-                            w="150px"
+                            // w="150px"
                             bg={theme.colorRed}
                             color={theme.colorWhite}
                         >
                             Log In
                         </Button>
                     )}
+
                     {user && (
-                        <Button
-                            onClick={signOutUser}
-                            _hover={{
-                                opacity: 1,
-                            }}
-                            w="150px"
-                            bg={theme.colorRed}
-                            color={theme.colorWhite}
-                        >
-                            Sign Out
-                        </Button>
+                        <Menu isOpen={isOpenMenu}>
+                            <MenuButton onMouseEnter={onOpenMenu}>
+                                <Image
+                                    src={user?.photoURL}
+                                    w="100px"
+                                    h="40px"
+                                    borderRadius="50%"
+                                    objectFit="cover"
+                                />
+                            </MenuButton>
+                            <MenuList onMouseLeave={onCloseMenu}>
+                                <MenuItem>Download</MenuItem>
+                                <MenuItem>Create a Copy</MenuItem>
+                                <MenuItem>Mark as Draft</MenuItem>
+                                <MenuItem>Delete</MenuItem>
+                                <MenuDivider />
+                                <MenuItem onClick={signOutUser}>
+                                    Log Out
+                                </MenuItem>
+                            </MenuList>
+                        </Menu>
                     )}
-                    {user && (
-                        <Image
-                            src={user?.photoURL}
-                            w="30px"
-                            h="30px"
-                            objectFit="cover"
-                        />
-                    )}
-                    <Text>{user ? user.userName : ''}</Text>
                 </Flex>
             </Flex>
             <UserAccount isOpen={isOpen} onClose={onClose} />

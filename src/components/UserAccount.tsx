@@ -5,7 +5,7 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalHeader,
-    ModalOverlay
+    ModalOverlay,
 } from '@chakra-ui/react'
 import React from 'react'
 import { BiChevronLeft } from 'react-icons/bi'

@@ -44,6 +44,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logInWithGoogle = async () => {
+        setLoading(true)
         return signInWithPopup(fbAuth, googleAuth)
             .then((result) => {
                 const user = result.user
@@ -60,9 +61,13 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
                     status: 'error',
                 })
             })
+            .finally(() => {
+                setLoading(false)
+            })
     }
 
     const accountWithEmail = (email: string, password: string) => {
+        setLoading(true)
         return createUserWithEmailAndPassword(fbAuth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user
@@ -77,9 +82,13 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
                     status: 'error',
                 })
             })
+            .finally(() => {
+                setLoading(false)
+            })
     }
 
     const logInWithEmail = (email: string, password: string) => {
+        setLoading(true)
         return signInWithEmailAndPassword(fbAuth, email, password)
             .then((userCredential) => {
                 // Signed in
@@ -97,9 +106,13 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
                     status: 'error',
                 })
             })
+            .finally(() => {
+                setLoading(false)
+            })
     }
 
     const logInWithFacebook = async () => {
+        setLoading(true)
         return signInWithPopup(fbAuth, facebookAuth)
             .then((result) => {
                 const user = result.user
@@ -113,6 +126,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
                 const errorMessage = error.message
                 setError(errorMessage)
                 // ...
+            })
+            .finally(() => {
+                setLoading(false)
             })
     }
     const signOutUser = () => {
@@ -136,8 +152,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     React.useEffect(() => {
         const unsubscribe = fbAuth.onAuthStateChanged((user) => {
             setCurrentUser(user)
-            //FIXME: memory leak issue
-            //stores information about current logged userPass
             setLoading(false)
             if (user) {
                 const ref = fbFireStore.doc(`users/${user.uid}`)
@@ -153,8 +167,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
             }
         })
 
-        return () => unsubscribe()
+        return () => unsubscribe();
     }, [])
+
     const values = {
         currentUser,
         user,
@@ -165,8 +180,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         error,
         accountWithEmail,
         logInWithEmail,
-    }
+    };
+
     return (
         <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
     )
-}
+};

@@ -10,15 +10,15 @@ import {
     MenuList,
     Text,
     useDisclosure,
-
 } from '@chakra-ui/react'
 import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import Logo from '../assets/logo-black.svg'
+import LogoBlack from '../assets/logo-black.svg'
+import LogoWhite from '../assets/logo-white.svg'
 import { useAuth } from '../context/AuthContext'
 import { theme } from '../utils/theme'
-import UserAccount from './UserAccount';
-import { HiOutlineLogout,HiOutlineCloudUpload } from "react-icons/hi";
+import UserAccount from './UserAccount'
+import { HiOutlineLogout, HiOutlineCloudUpload } from 'react-icons/hi'
 const Navbar = () => {
     const { user, signOutUser } = useAuth()!
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -46,12 +46,14 @@ const Navbar = () => {
                 justify="space-around"
                 align="center"
                 gap={10}
-                px='15%'
+                px="15%"
                 py={5}
+                bg={theme.colorDarkSienna}
+                color={theme.colorWhite}
             >
                 <Link to="/">
                     <Image
-                        src={Logo}
+                        src={LogoWhite}
                         w="300px"
                         height="auto"
                         alt="Brand logo"
@@ -65,20 +67,24 @@ const Navbar = () => {
                     cursor="pointer"
                 >
                     <Text fontWeight="bold" onClick={handleUpload}>
-                       {user ? <HiOutlineCloudUpload fontSize='2rem'/> : 'Upload'}
+                        {user ? (
+                            <HiOutlineCloudUpload fontSize="2rem" />
+                        ) : (
+                            'Upload'
+                        )}
                     </Text>
 
                     {!user && (
                         <Button
-                        py={5} px={10}
-                        size='sm'
+                            py={5}
+                            px={10}
+                            size="sm"
                             onClick={() => {
                                 onOpen()
                             }}
                             _hover={{
                                 opacity: 1,
                             }}
-                            // w="150px"
                             bg={theme.colorRed}
                             color={theme.colorWhite}
                         >
@@ -88,26 +94,35 @@ const Navbar = () => {
 
                     {user && (
                         <Menu isOpen={isOpenMenu}>
-                            <MenuButton onClick={onCloseMenu} onMouseEnter={onOpenMenu}>
+                            <MenuButton
+                                onClick={onCloseMenu}
+                                onMouseEnter={onOpenMenu}
+                            >
                                 <Image
                                     src={user?.photoURL}
                                     w="70px"
-                                    
                                     borderRadius="50%"
                                     objectFit="cover"
                                 />
                             </MenuButton>
-                            <MenuList  onMouseLeave={onCloseMenu}>
-                                <MenuItem>Download</MenuItem>
-                                <MenuItem>Create a Copy</MenuItem>
-                                <MenuItem>Mark as Draft</MenuItem>
-                                <MenuItem>Delete</MenuItem>
+                            <MenuList
+                                bg={theme.colorBlack}
+                                onMouseLeave={onCloseMenu}
+                            >
+                                <MenuItem _hover={{ bg: 'transparent' }}>
+                                    Profile
+                                </MenuItem>
+                                <MenuItem _hover={{ bg: 'transparent' }}>
+                                    Settings
+                                </MenuItem>
                                 <MenuDivider />
-                                <MenuItem onClick={signOutUser}>
-                                    <Flex align='center' gap={1}>
-                                    <HiOutlineLogout fontSize='1.5rem'/>
-                                    <Text>Log Out</Text>
-                                        
+                                <MenuItem
+                                    _hover={{ bg: 'transparent' }}
+                                    onClick={signOutUser}
+                                >
+                                    <Flex align="center" gap={1}>
+                                        <HiOutlineLogout fontSize="1.5rem" />
+                                        <Text>Log Out</Text>
                                     </Flex>
                                 </MenuItem>
                             </MenuList>

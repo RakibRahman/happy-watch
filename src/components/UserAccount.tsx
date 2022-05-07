@@ -57,7 +57,7 @@ const UserAccount: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                             <Route path="/" element={<LogIn />} />
                             <Route path="/signup" element={<SignUp />} />
                             <Route
-                                path="/sginupEmail"
+                                path="/signupEmail"
                                 element={<EmailSignUp />}
                             />
                             <Route

@@ -1,23 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import {
-    Text,
-    FormLabel,
-    FormControl,
-    Flex,
-    Box,
-    Stack,
-    Input,
-    Button,
-    useToast,
-} from '@chakra-ui/react'
-import { theme } from '../../utils/theme'
+import { Box, Button, Input, Stack, Text, useToast } from '@chakra-ui/react'
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-interface FormState {
-    email: string
-    password: string
-    repeatPassword?: string
-}
+import { theme } from '../../utils/theme'
+import { FormState } from '../../utils/types'
+
 const EmailSignUp = () => {
     const [formState, setFormState] = useState<FormState>({
         email: '',
@@ -25,14 +12,12 @@ const EmailSignUp = () => {
         repeatPassword: '',
     })
 
-    const { accountWithEmail } = useAuth()!
-    const navigate = useNavigate()
+    const { accountWithEmail, loading } = useAuth()!
     const toast = useToast()
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         const name = e.target.name
-
         setFormState({ ...formState, [name]: value })
     }
 
@@ -79,6 +64,9 @@ const EmailSignUp = () => {
                     name="repeatPassword"
                 />
                 <Button
+                    loadingText="Signing Up..."
+                    isLoading={loading}
+                    disabled={loading}
                     type="submit"
                     color={theme.colorWhite}
                     bg={theme.colorRed}

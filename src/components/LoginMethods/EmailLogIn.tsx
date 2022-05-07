@@ -2,19 +2,16 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Text, Box, Stack, Input, Button } from '@chakra-ui/react'
 import { theme } from '../../utils/theme'
+import { FormState } from '../../utils/types'
 import { useAuth } from '../../context/AuthContext'
 
-interface FormState {
-    email: string
-    password: string
-}
 const EmailLogIn = () => {
     const [formState, setFormState] = useState<FormState>({
         email: '',
         password: '',
     })
 
-    const { logInWithEmail } = useAuth()!
+    const { logInWithEmail, loading } = useAuth()!
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -53,6 +50,9 @@ const EmailLogIn = () => {
                 />
 
                 <Button
+                    disabled={loading}
+                    isLoading={loading}
+                    loadingText="Logging in..."
                     _hover={{ opacity: 1 }}
                     type="submit"
                     color={theme.colorWhite}

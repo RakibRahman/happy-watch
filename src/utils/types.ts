@@ -23,3 +23,9 @@ export interface ModalProps {
     onClose: () => void
     currentUser: CurrentUser
 }
+
+export interface FormState {
+    email: string
+    password: string
+    repeatPassword?: string
+}

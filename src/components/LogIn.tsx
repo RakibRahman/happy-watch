@@ -22,7 +22,7 @@ const LogIn: React.FC = () => {
             borderRight: '1px solid gray',
         },
     }
-    const { logInWithGoogle } = useAuth()!
+    const { logInWithGoogle, loading } = useAuth()!
     return (
         <Box textAlign="center">
             <Heading size="lg">Log In To HappyWatch</Heading>

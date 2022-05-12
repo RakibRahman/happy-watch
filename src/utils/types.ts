@@ -1,31 +1,31 @@
-import { ReactNode } from 'react'
-import { User as FirebaseUser } from 'firebase/auth'
+import {ReactNode} from 'react';
+import {User as FirebaseUser} from 'firebase/auth';
 
 export interface Props {
-    children?: ReactNode
+  children?: ReactNode;
 }
 
-export type CurrentUser = FirebaseUser | null
+export type CurrentUser = FirebaseUser | null;
 
 export interface AuthContextInterface {
-    currentUser: CurrentUser
-    user: any
-    error: string
-    loading: boolean
-    logInWithGoogle: () => void
-    logInWithFacebook: () => void
-    signOutUser: () => void
-    accountWithEmail: (email: string, password: string) => void
-    logInWithEmail: (email: string, password: string) => void
+  currentUser: CurrentUser;
+  user: any;
+  error: string;
+  loading: boolean;
+  logInWithGoogle: () => void;
+  logInWithFacebook: () => void;
+  signOutUser: () => void;
+  accountWithEmail: (email: string, password: string) => void;
+  logInWithEmail: (email: string, password: string) => void;
 }
 
 export interface ModalProps {
-    onClose: () => void
-    currentUser: CurrentUser
+  onClose: () => void;
+  currentUser: CurrentUser;
 }
 
 export interface FormState {
-    email: string
-    password: string
-    repeatPassword?: string
+  email: string;
+  password: string;
+  repeatPassword?: string;
 }

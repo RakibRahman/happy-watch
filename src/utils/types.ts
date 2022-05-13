@@ -1,5 +1,6 @@
 import {ReactNode} from 'react';
-import {User as FirebaseUser} from 'firebase/auth';
+import {User as FirebaseUser,} from 'firebase/auth';
+import {DocumentReference} from 'firebase/firestore';
 
 export interface Props {
   children?: ReactNode;
@@ -7,9 +8,18 @@ export interface Props {
 
 export type CurrentUser = FirebaseUser | null;
 
+export interface User{
+  id: string;
+  ref: DocumentReference;
+  displayName: string;
+  userName:string;
+  uid:string;
+  photoURL:string;
+}
+
 export interface AuthContextInterface {
   currentUser: CurrentUser;
-  user: any;
+  user:User;
   error: string;
   loading: boolean;
   logInWithGoogle: () => void;

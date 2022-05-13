@@ -6,9 +6,9 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate('*');
-    }
+    // if (!user) {
+    //   navigate('*');
+    // }
   }, [user]);
   return <div>Profile</div>;
 };

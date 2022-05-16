@@ -1,9 +1,8 @@
 // Import the functions you need from the SDKs you need
-import {getAuth, GoogleAuthProvider, FacebookAuthProvider} from 'firebase/auth';
+import {FacebookAuthProvider, getAuth, GoogleAuthProvider} from 'firebase/auth';
 import firebase from 'firebase/compat/app';
-import {getFirestore} from 'firebase/firestore';
-import {getStorage} from 'firebase/storage';
 import 'firebase/compat/firestore';
+import {getStorage, ref} from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAv6D5m_Jcu7jdttARBcO9rxaZwXVo_n-4',
@@ -20,6 +19,7 @@ const app = firebase.initializeApp(firebaseConfig);
 const fbAuth = getAuth(app);
 const fbFireStore = firebase.firestore();
 const fbStorage = getStorage(app);
+const videosRef = ref(fbStorage, 'videos');
 const googleAuth = new GoogleAuthProvider();
 const facebookAuth = new FacebookAuthProvider();
 const fbTimestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -31,6 +31,7 @@ export {
   googleAuth,
   fbAuth,
   fbStorage,
+  videosRef,
   fbFireStore,
   facebookAuth,
 };

@@ -1,10 +1,10 @@
-import {DragEvent, useEffect, useRef, SyntheticEvent, ChangeEvent} from 'react';
+import {ChangeEvent, DragEvent, useEffect, useRef} from 'react';
 
 export default function useDragDrop(onDrop: (file: File) => void) {
   const dropRef = useRef<any>();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleDrag = (e: DragEvent | SyntheticEvent) => {
+  const handleDrag = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation(); // prevent other events from bubbling or calling other
   };

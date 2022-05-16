@@ -1,5 +1,5 @@
 import {ReactNode} from 'react';
-import {User as FirebaseUser,} from 'firebase/auth';
+import {User as FirebaseUser} from 'firebase/auth';
 import {DocumentReference} from 'firebase/firestore';
 
 export interface Props {
@@ -8,18 +8,18 @@ export interface Props {
 
 export type CurrentUser = FirebaseUser | null;
 
-export interface User{
+export interface User {
   id: string;
   ref: DocumentReference;
   displayName: string;
-  userName:string;
-  uid:string;
-  photoURL:string;
+  userName: string;
+  uid: string;
+  photoURL: string;
 }
 
 export interface AuthContextInterface {
   currentUser: CurrentUser;
-  user:User;
+  user: User;
   error: string;
   loading: boolean;
   logInWithGoogle: () => void;
@@ -38,4 +38,11 @@ export interface FormState {
   email: string;
   password: string;
   repeatPassword?: string;
+}
+
+export interface FileUploadStateProps {
+  error: string | null;
+  uploading: boolean;
+  progress: number;
+  downloadURL: string;
 }

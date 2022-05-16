@@ -22,11 +22,13 @@ type FileUpload = {
 };
 
 const FileUpload: React.FC<FileUpload> = ({user, handleUpload, state}) => {
-  const {error, downloadURL, uploading, progress} = state;
+  const {file, downloadURL, uploading, progress} = state;
 
   useEffect(() => {
-    console.log(uploading);
-  }, [uploading]);
+    if (file) {
+      console.log(file);
+    }
+  }, [file]);
   const getVideoDuration = (file: File) => {
     const reader = new FileReader();
 
@@ -117,9 +119,15 @@ const FileUpload: React.FC<FileUpload> = ({user, handleUpload, state}) => {
           </Button>
         </>
       )}
-      <CircularProgress value={progress} color="green.400">
-        <CircularProgressLabel>{progress}%</CircularProgressLabel>
-      </CircularProgress>
+
+      {uploading && (
+        <Box>
+          <CircularProgress value={progress} color="green.400">
+            <CircularProgressLabel>{progress}%</CircularProgressLabel>
+          </CircularProgress>
+          <Text>Uploading {file?.name}</Text>
+        </Box>
+      )}
     </Flex>
   );
 };

@@ -41,8 +41,8 @@ export interface FormState {
 }
 
 export interface FileUploadStateProps {
-  error: string | null;
   uploading: boolean;
   progress: number;
   downloadURL: string;
+  file: File | null;
 }

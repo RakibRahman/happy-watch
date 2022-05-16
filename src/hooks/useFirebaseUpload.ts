@@ -1,21 +1,23 @@
 import {getDownloadURL, ref, uploadBytesResumable} from 'firebase/storage';
 import {nanoid} from 'nanoid';
+import {useReducer} from 'react';
 import {fbStorage} from '../lib/firebase';
-import {User, FileUploadStateProps} from '../utils/types';
-import {useReducer, Reducer} from 'react';
+import {FileUploadStateProps, User} from '../utils/types';
+import {useToast} from '@chakra-ui/react';
 
 export default function useFireBaseUpload(user: User) {
+  const toast = useToast();
   const FileUploadState: FileUploadStateProps = {
     uploading: false,
-    error: '',
     downloadURL: '',
     progress: 0,
+    file: null,
   };
 
   type ACTIONTYPE =
     | {type: 'isUploading'; payload: boolean}
-    | {type: 'error'; payload: string}
     | {type: 'progress'; payload: number}
+    | {type: 'file'; payload: File}
     | {type: 'downloadLink'; payload: string};
 
   function reducer(state: typeof FileUploadState, action: ACTIONTYPE) {
@@ -25,16 +27,17 @@ export default function useFireBaseUpload(user: User) {
           ...state,
           uploading: action.payload,
         };
-      case 'error':
-        return {...state, error: action.payload};
       case 'progress':
         return {...state, progress: action.payload};
+      case 'file':
+        return {...state, file: action.payload};
       case 'downloadLink':
         return {...state, downloadLink: action.payload};
       default:
         throw new Error();
     }
   }
+
   const [state, dispatch] = useReducer(reducer, FileUploadState);
   const handleUpload = (file: File) => {
     const storageRef = ref(fbStorage, `videos/${user.uid}/${nanoid(10)}`);
@@ -45,6 +48,7 @@ export default function useFireBaseUpload(user: User) {
       snapshot => {
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         dispatch({type: 'isUploading', payload: true});
+        dispatch({type: 'file', payload: file});
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         // console.log('Upload is ' + progress + '% done');
@@ -61,23 +65,34 @@ export default function useFireBaseUpload(user: User) {
       error => {
         switch (error.code) {
           case 'storage/unauthorized':
-            dispatch({
-              type: 'error',
-              payload: "User doesn't have permission to access the object",
+            toast({
+              title: 'Unauthorized user',
+              description: "User doesn't have permission to access the storage",
+              status: 'error',
             });
             break;
           case 'storage/canceled':
-            dispatch({type: 'error', payload: 'User canceled the upload'});
+            toast({
+              title: 'Upload is canceled',
+              description: 'User canceled the upload',
+              status: 'error',
+            });
             break;
 
           case 'storage/quota-exceeded':
-            dispatch({type: 'error', payload: 'User quota exceeded'});
+            toast({
+              title: 'Quota exceeded',
+              description: 'User quota exceeded',
+              status: 'error',
+            });
             break;
 
           case 'storage/unknown':
-            dispatch({
-              type: 'error',
-              payload: 'Unknown error occurred, inspect error.serverResponse',
+            toast({
+              title: 'Storage unknown',
+              description:
+                'Unknown error occurred, inspect error.serverResponse',
+              status: 'error',
             });
             break;
         }
@@ -86,6 +101,10 @@ export default function useFireBaseUpload(user: User) {
         // Upload completed successfully, now we can get the download URL
         getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
           dispatch({type: 'downloadLink', payload: downloadURL});
+          toast({
+            title: 'Uploading Completed',
+          });
+          dispatch({type: 'isUploading', payload: false});
         });
       },
     );

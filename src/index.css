@@ -14,3 +14,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#videoPlayer {
+  object-fit: cover;
+  width: 285px;
+  height: 512px;
+  border-radius: 10px;
+}

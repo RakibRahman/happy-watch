@@ -56,7 +56,7 @@ const Navbar = () => {
         </Link>
         <Input type="text" placeholder="Search Videos..." />
         <Flex justify="space-between" align="center" gap={3} cursor="pointer">
-          <Text fontWeight="bold" onClick={handleUpload}>
+          <Text fontWeight="bold" color="black" onClick={handleUpload}>
             {user ? (
               <HiOutlineCloudUpload color="black" fontSize="2rem" />
             ) : (

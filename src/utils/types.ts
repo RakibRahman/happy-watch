@@ -1,6 +1,7 @@
 import {ReactNode} from 'react';
 import {User as FirebaseUser} from 'firebase/auth';
 import {DocumentReference} from 'firebase/firestore';
+import {UploadTask} from 'firebase/storage';
 
 export interface Props {
   children?: ReactNode;
@@ -45,4 +46,22 @@ export interface FileUploadStateProps {
   progress: number;
   downloadURL: string;
   file: File | null;
+  uploadTask: UploadTask | null;
+  fullPath: string;
 }
+
+export type VideoPlayerProps = {
+  file?: File | null;
+  videoLink: string;
+  height?: string;
+  width?: string;
+};
+
+export type ACTIONTYPE =
+  | {type: 'isUploading'; payload: boolean}
+  | {type: 'progress'; payload: number}
+  | {type: 'file'; payload: File}
+  | {type: 'downloadLink'; payload: string}
+  | {type: 'uploadTask'; payload: any}
+  | {type: 'cancelUpload'}
+  | {type: 'getFullPath'; payload: string};

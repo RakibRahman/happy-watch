@@ -1,8 +1,14 @@
-import {getDownloadURL, ref, uploadBytesResumable} from 'firebase/storage';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+  deleteObject,
+} from 'firebase/storage';
 import {nanoid} from 'nanoid';
 import {useReducer} from 'react';
 import {fbStorage} from '../lib/firebase';
-import {FileUploadStateProps, User} from '../utils/types';
+import {FileUploadStateProps, User, ACTIONTYPE} from '../utils/types';
+
 import {useToast} from '@chakra-ui/react';
 
 export default function useFireBaseUpload(user: User) {
@@ -12,13 +18,9 @@ export default function useFireBaseUpload(user: User) {
     downloadURL: '',
     progress: 0,
     file: null,
+    fullPath: '',
+    uploadTask: null,
   };
-
-  type ACTIONTYPE =
-    | {type: 'isUploading'; payload: boolean}
-    | {type: 'progress'; payload: number}
-    | {type: 'file'; payload: File}
-    | {type: 'downloadLink'; payload: string};
 
   function reducer(state: typeof FileUploadState, action: ACTIONTYPE) {
     switch (action.type) {
@@ -32,7 +34,13 @@ export default function useFireBaseUpload(user: User) {
       case 'file':
         return {...state, file: action.payload};
       case 'downloadLink':
-        return {...state, downloadLink: action.payload};
+        return {...state, downloadURL: action.payload};
+      case 'uploadTask':
+        return {...state, uploadTask: action.payload};
+      case 'getFullPath':
+        return {...state, fullPath: action.payload};
+      case 'cancelUpload':
+        return (state = FileUploadState);
       default:
         throw new Error();
     }
@@ -42,6 +50,7 @@ export default function useFireBaseUpload(user: User) {
   const handleUpload = (file: File) => {
     const storageRef = ref(fbStorage, `videos/${user.uid}/${nanoid(10)}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
+    dispatch({type: 'uploadTask', payload: uploadTask});
 
     uploadTask.on(
       'state_changed',
@@ -51,15 +60,14 @@ export default function useFireBaseUpload(user: User) {
         dispatch({type: 'file', payload: file});
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // console.log('Upload is ' + progress + '% done');
+
         dispatch({type: 'progress', payload: Math.round(progress)});
         switch (snapshot.state) {
           case 'paused':
             // console.log('Upload is paused');
             break;
           case 'running':
-            // console.log('Upload is running');
-            break;
+          // console.log('Upload is running');
         }
       },
       error => {
@@ -105,10 +113,43 @@ export default function useFireBaseUpload(user: User) {
             title: 'Uploading Completed',
           });
           dispatch({type: 'isUploading', payload: false});
+          dispatch({
+            type: 'getFullPath',
+            payload: uploadTask.snapshot.ref.fullPath,
+          });
+
+          console.log('full', uploadTask.snapshot.ref.fullPath);
         });
       },
     );
   };
 
-  return {handleUpload, state, dispatch};
+  const cancelUpload = async () => {
+    if (state.uploadTask) {
+      dispatch({type: 'cancelUpload'});
+      await state.uploadTask.cancel();
+    }
+  };
+
+  const discardUpload = async () => {
+    // Create a reference to the file to delete
+    const desertRef = ref(fbStorage, state.fullPath);
+    console.log('del path', state.fullPath);
+    // Delete the file
+    deleteObject(desertRef)
+      .then(() => {
+        toast({
+          title: 'Successfully deleted',
+          status: 'success',
+        });
+      })
+      .catch(error => {
+        toast({
+          title: ' Uh-oh, an error occurred!',
+          status: 'error',
+        });
+      });
+  };
+
+  return {handleUpload, state, dispatch, cancelUpload, discardUpload};
 }

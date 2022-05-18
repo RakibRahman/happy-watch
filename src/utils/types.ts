@@ -55,6 +55,7 @@ export type VideoPlayerProps = {
   videoLink: string;
   height?: string;
   width?: string;
+  showControl?: boolean;
 };
 
 export type ACTIONTYPE =

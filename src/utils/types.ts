@@ -11,7 +11,7 @@ export type CurrentUser = FirebaseUser | null;
 
 export interface User {
   id: string;
-  ref: DocumentReference;
+  ref?: DocumentReference;
   displayName: string;
   userName: string;
   uid: string;

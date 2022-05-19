@@ -10,7 +10,15 @@ const Profile = () => {
     //   navigate('*');
     // }
   }, [user]);
-  return <div>Profile</div>;
+  return (
+    user && (
+      <>
+        <p> {user.displayName}</p>
+        <p> {user.userName}</p>
+        {/* <p>    {user.displayName}</p> */}
+      </>
+    )
+  );
 };
 
 export default Profile;

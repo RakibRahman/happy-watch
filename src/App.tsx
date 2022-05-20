@@ -1,12 +1,11 @@
 import {ChakraProvider} from '@chakra-ui/react';
 import {Route, Routes} from 'react-router-dom';
-import Feed from './components/Feed';
+import Feed from './components/Feed/Feed';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
 import Upload from './components/Upload/Upload';
-import CaptionEditor from './components/Upload/CaptionEditor';
-import VideoPost from './components/VideoPost';
+import VideoPost from './components/Feed/FeedPost';
 import {AuthContextProvider, useAuth} from './context/AuthContext';
 import Notfound from './pages/Notfound';
 import CustomProfile from './components/CustomProfile';
@@ -17,7 +16,6 @@ function App() {
     <ChakraProvider>
       <AuthContextProvider>
         <Navbar />
-        <CaptionEditor />
         {/* <CustomProfile/> */}
         <Routes>
           <Route path="/" element={<Feed />} />

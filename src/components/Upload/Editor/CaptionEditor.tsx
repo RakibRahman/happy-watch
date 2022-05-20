@@ -1,84 +1,37 @@
-import React, {
-  MouseEvent,
-  ReactElement,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  useEffect,
-} from 'react';
-import {EditorState, convertToRaw} from 'draft-js';
+import { Box } from '@chakra-ui/react';
 import Editor from '@draft-js-plugins/editor';
 import createMentionPlugin, {
-  defaultSuggestionsFilter,
-  MentionData,
-  MentionPluginTheme,
+  MentionData
 } from '@draft-js-plugins/mention';
+import { convertToRaw, DraftHandleValue, EditorState, Modifier } from 'draft-js';
+import { collection, getDocs } from 'firebase/firestore';
+import React, {
+  ReactElement,
+  useCallback, useEffect, useMemo,
+  useRef,
+  useState
+} from 'react';
+import { fbFireStore } from '../../../lib/firebase';
 import editorStyles from './CustomMentionEditor.module.css';
 import mentionsStyles from './MentionsStyles.module.css';
-// import mentions from './Mentions';
-import {User} from '../../utils/types';
-import {collection, getDocs} from 'firebase/firestore';
-import {fbFireStore} from '../../lib/firebase';
-import {Box} from '@chakra-ui/react';
 
-export interface EntryComponentProps {
-  className?: string;
-  onMouseDown(event: MouseEvent): void;
-  onMouseUp(event: MouseEvent): void;
-  onMouseEnter(event: MouseEvent): void;
-  role: string;
-  id: string;
-  'aria-selected'?: boolean | 'false' | 'true';
-  theme?: MentionPluginTheme;
-  mention: MentionData;
-  isFocused: boolean;
-  searchValue?: string;
+
+type CaptionEditorProps = {
+  editorState: EditorState,
+  setEditorState: React.Dispatch<React.SetStateAction<EditorState>>
 }
 
-function Entry(props: EntryComponentProps): ReactElement {
-  const {
-    mention,
-    theme,
-    searchValue, // eslint-disable-line @typescript-eslint/no-unused-vars
-    isFocused, // eslint-disable-line @typescript-eslint/no-unused-vars
-    ...parentProps
-  } = props;
-
-  return (
-    <div {...parentProps}>
-      <div className={theme?.mentionSuggestionsEntryContainer}>
-        <div className={theme?.mentionSuggestionsEntryContainerLeft}>
-          <img
-            src={mention.avatar}
-            className={theme?.mentionSuggestionsEntryAvatar}
-            role="presentation"
-          />
-        </div>
-
-        <div className={theme?.mentionSuggestionsEntryContainerRight}>
-          <div className={theme?.mentionSuggestionsEntryText}>
-            {mention.userName}
-          </div>
-
-          <div className={theme?.mentionSuggestionsEntryTitle}>
-            {mention.title}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function CustomMentionEditor(): ReactElement {
+export default function CustomMentionEditor({ editorState, setEditorState }: CaptionEditorProps): ReactElement {
   const ref = useRef<Editor>(null);
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty(),
-  );
+  // const [editorState, setEditorState] = useState(() =>
+  //   EditorState.createEmpty(),
+  // );
+  let maxLength = 150;
+
   const [open, setOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<MentionData[]>([]);
 
-  const {MentionSuggestions, plugins} = useMemo(() => {
+  const { MentionSuggestions, plugins } = useMemo(() => {
     const mentionPlugin = createMentionPlugin({
       entityMutability: 'IMMUTABLE',
       theme: mentionsStyles,
@@ -86,10 +39,10 @@ export default function CustomMentionEditor(): ReactElement {
       supportWhitespace: true,
     });
     // eslint-disable-next-line no-shadow
-    const {MentionSuggestions} = mentionPlugin;
+    const { MentionSuggestions } = mentionPlugin;
     // eslint-disable-next-line no-shadow
     const plugins = [mentionPlugin];
-    return {plugins, MentionSuggestions};
+    return { plugins, MentionSuggestions };
   }, []);
 
   const onOpenChange = useCallback((_open: boolean) => {
@@ -122,7 +75,7 @@ export default function CustomMentionEditor(): ReactElement {
     );
   };
 
-  const onSearchChange = useCallback(({value}: {value: string}) => {
+  const onSearchChange = useCallback(({ value }: { value: string }) => {
     // An import statment would break server-side rendering.
     // require('whatwg-fetch'); // eslint-disable-line global-require
 
@@ -141,6 +94,40 @@ export default function CustomMentionEditor(): ReactElement {
   const getRawContent = () => {
     console.log(editorState.getCurrentContent());
   };
+
+  function handleBeforeInput(chars: string,
+    editorState: EditorState,
+    eventTimeStamp: number,): DraftHandleValue {
+    const currentContent = editorState.getCurrentContent();
+    const currentContentLength = currentContent.getPlainText('').length;
+
+
+    if (currentContentLength > maxLength - 1) {
+      console.log(`You can type max ${maxLength} characters`);
+
+      return "handled";
+    }
+
+    return "not-handled";
+  }
+
+  function handlePastedText(text: string, _: string, state: EditorState): DraftHandleValue {
+    const overflowChars = text.length + state.getCurrentContent().getPlainText().length - maxLength;
+
+    if (overflowChars > 0) {
+      if (text.length - overflowChars > 0) {
+        const newContent = Modifier.insertText(
+          state.getCurrentContent(),
+          state.getSelection(),
+          text.substring(0, text.length - overflowChars)
+        );
+        setEditorState(EditorState.push(state, newContent, 'insert-characters'));
+      }
+      return 'handled';
+    } else {
+      return 'not-handled';
+    }
+  }
 
   useEffect(() => {
     const contentState = editorState.getCurrentContent();
@@ -164,6 +151,9 @@ export default function CustomMentionEditor(): ReactElement {
         onChange={setEditorState}
         plugins={plugins}
         ref={ref}
+        handleBeforeInput={handleBeforeInput}
+        handlePastedText={handlePastedText}
+
       />
       <MentionSuggestions
         open={open}

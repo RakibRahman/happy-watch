@@ -1,7 +1,7 @@
 import React from 'react';
 
-const VideoPost = () => {
+const FeedPost = () => {
   return <div>VideoPost</div>;
 };
 
-export default VideoPost;
+export default FeedPost;

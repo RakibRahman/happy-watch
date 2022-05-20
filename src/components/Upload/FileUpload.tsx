@@ -151,7 +151,7 @@ const FileUpload: React.FC<FileUpload> = ({
         )}
       </Flex>
       {downloadURL && !uploading && (
-        <>
+        <Flex flexDirection="column" gap={5}>
           <VideoPlayer height="300px" width="250px" videoLink={downloadURL} />
           <Button
             size="sm"
@@ -160,9 +160,9 @@ const FileUpload: React.FC<FileUpload> = ({
               discardUpload();
             }}
           >
-            Discard{' '}
+            Change Video
           </Button>
-        </>
+        </Flex>
       )}
     </>
   );

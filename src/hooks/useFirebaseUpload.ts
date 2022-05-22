@@ -136,7 +136,7 @@ export default function useFireBaseUpload(user: User) {
     const desertRef = ref(fbStorage, state.fullPath);
     console.log('del path', state.fullPath);
     // Delete the file
-   await deleteObject(desertRef)
+    await deleteObject(desertRef)
       .then(() => {
         toast({
           title: 'Successfully deleted',

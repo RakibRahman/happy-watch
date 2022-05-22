@@ -34,13 +34,7 @@ const FileUpload: React.FC<FileUpload> = ({
 }) => {
   const {file, downloadURL, uploading, progress} = state;
 
-  useEffect(() => {
-    if (file) {
-      console.log('file already exists');
-    } else {
-      console.log('file removed');
-    }
-  }, [file]);
+  useEffect(() => {}, [file]);
   const getVideoDuration = (file: File) => {
     const reader = new FileReader();
 

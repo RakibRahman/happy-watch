@@ -4,6 +4,7 @@ import {VideoPlayerProps} from '../utils/types';
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   videoLink,
   showControl = false,
+  isLoop = true,
 }) => {
   return (
     <>
@@ -12,7 +13,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         autoPlay
         muted
         id="videoPlayer"
-        loop
+        loop={isLoop ? true : false}
       >
         <source src={videoLink} type="video/mp4" />
         <source src={videoLink} type="video/webm" />

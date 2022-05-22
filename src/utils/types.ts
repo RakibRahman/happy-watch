@@ -56,7 +56,17 @@ export type VideoPlayerProps = {
   height?: string;
   width?: string;
   showControl?: boolean;
+  isLoop?: boolean;
 };
+
+export interface PostProps {
+  postId: string;
+  content: any;
+  audio_name: string;
+  user: User;
+  timestamp: unknown;
+  videoUrl: string;
+}
 
 export type ACTIONTYPE =
   | {type: 'isUploading'; payload: boolean}

@@ -15,7 +15,7 @@ code {
     monospace;
 }
 
-#videoPlayer {
+.videoPlayer {
   object-fit: cover;
   width: 285px;
   height: 512px;

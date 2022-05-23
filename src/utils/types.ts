@@ -57,6 +57,9 @@ export type VideoPlayerProps = {
   width?: string;
   showControl?: boolean;
   isLoop?: boolean;
+  autoPlay?: boolean;
+  muted?: boolean;
+  videoRef?:any;
 };
 
 export interface PostProps {

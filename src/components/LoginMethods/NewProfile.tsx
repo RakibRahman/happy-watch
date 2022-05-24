@@ -73,7 +73,7 @@ const NewProfile: FC<ModalProps> = ({currentUser, onClose}) => {
       await fbFireStore.doc(`users/${uid}`).set({
         userName: uName,
         uid,
-        photoURL: photoURL ? photoURL : `https://picsum.photos/200/300/?blur`,
+        photoURL: photoURL ? photoURL : `https://picsum.photos/200`,
         displayName: displayName ? displayName : uName,
       });
 

@@ -1,19 +1,23 @@
 import React from 'react';
-import {User} from '../../utils/types';
-import {Flex, Box, Heading, Image, Text} from '@chakra-ui/react';
-import {FaMusic} from 'react-icons/fa';
+import { User } from '../../utils/types';
+import { Flex, Box, Heading, Image, Text } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
+
 type Info = {
   user: User;
 };
-const UserInfo: React.FC<Info> = ({user}) => {
+const UserInfo: React.FC<Info> = ({ user }) => {
   return (
-    <Flex gap={3}>
-      <Image src={user.photoURL} w="50px" height="50px" borderRadius="50%" />
-      <Flex align="center" gap={1}>
-        <Heading size="md">{user.userName}</Heading>
-        <Text size="sm">{user.displayName}</Text>
+    <Link to={`/${user.userName}`}>
+      <Flex gap={3} w='100%' mb={3} align="center">
+        <Flex w='100%' ml='auto' align="center" gap="15px">
+          <Heading size="lg" _hover={{
+            textDecoration: 'underline'
+          }}>{user.userName}</Heading>
+          <Text fontSize="1.2rem" >{user.displayName}</Text>
+        </Flex>
       </Flex>
-    </Flex>
+    </Link>
   );
 };
 

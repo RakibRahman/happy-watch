@@ -37,7 +37,7 @@ const EmailSignUp = () => {
 
   return (
     <Box>
-      <Text>Sign Up</Text>
+      <Text fontWeight='bold' fontSize='1.2rem' mb={3}>Sign Up</Text>
       <Stack as="form" spacing="10px" onSubmit={submitHandler}>
         <Input
           required
@@ -68,6 +68,7 @@ const EmailSignUp = () => {
           isLoading={loading}
           disabled={loading}
           type="submit"
+          _hover={{opacity: 0.8}}
           color={theme.colorWhite}
           bg={theme.colorRed}
         >
@@ -75,7 +76,9 @@ const EmailSignUp = () => {
         </Button>
       </Stack>
       <Link to="/">
-        <Text>Already have account?,Log in...</Text>
+        <Text>Already have account?
+          <Text my={3} as='span' color={theme.colorRed} ml={2}>Log in</Text>
+          </Text>
       </Link>
     </Box>
   );

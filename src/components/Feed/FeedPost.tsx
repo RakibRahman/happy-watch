@@ -13,12 +13,12 @@ const FeedPost: React.FC<Props> = ({ post }) => {
   const { isPlaying, togglePlay, isMuted, videoRef, setPlaying, toggleMute } = useVideo();
 
   return (
-    <>
-      <Box dangerouslySetInnerHTML={{ __html: formatDraftText(post.content) }} />
-      <Flex>
+    <Box>
+      <Box className="richEditor-box" dangerouslySetInnerHTML={{ __html: formatDraftText(post.content) }} />
+      <Flex justify="center" textAlign="left">
         <Box>
-          <FaMusic /> {post.audio_name}
-          <Box position='relative'>
+        <Flex align="center" gap="5px">  <FaMusic /> {post.audio_name}</Flex>
+          <Box  position='relative' mt={4}>
 
             <video
               ref={videoRef}
@@ -26,7 +26,7 @@ const FeedPost: React.FC<Props> = ({ post }) => {
               playsInline
               loop
               muted={isMuted}
-              className="videoPlayer"
+              className="videoPlayerFeed"
             />
             <ToggleVideoPlay isPlaying={isPlaying} togglePlay={togglePlay} />
             <ToggleVideoMute isMuted={isMuted} toggleMute={toggleMute} />
@@ -34,7 +34,7 @@ const FeedPost: React.FC<Props> = ({ post }) => {
 
         </Box>
       </Flex>
-    </>
+    </Box>
   );
 };
 

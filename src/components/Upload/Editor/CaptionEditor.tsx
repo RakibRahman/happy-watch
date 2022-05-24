@@ -152,7 +152,6 @@ export default function CustomMentionEditor({
             // get the mention object selected
           }}
         />
-        <Button onClick={onMention}>@</Button>
       </Box>
     </>
   );

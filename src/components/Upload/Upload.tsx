@@ -1,26 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import FileUpload from './FileUpload';
-import {Box, Text, Flex, Button} from '@chakra-ui/react';
-import {useAuth} from '../../context/AuthContext';
+import { Box, Text, Flex, Button } from '@chakra-ui/react';
+import { useAuth } from '../../context/AuthContext';
 import useFireBaseUpload from '../../hooks/useFirebaseUpload';
 import CaptionEditor from './Editor/CaptionEditor';
-import {theme} from '../../utils/theme';
+import { theme } from '../../utils/theme';
 // import { EditorState } from 'draft-js';
-import {EditorState, convertToRaw} from 'draft-js';
-import {doc, setDoc} from 'firebase/firestore';
-import {fbFireStore, fbTimestamp} from '../../lib/firebase';
-import {nanoid} from 'nanoid';
+import { EditorState, convertToRaw } from 'draft-js';
+import { doc, setDoc } from 'firebase/firestore';
+import { fbFireStore, fbTimestamp } from '../../lib/firebase';
+import { nanoid } from 'nanoid';
 const Upload = () => {
-  const {user} = useAuth()!;
+  const { user } = useAuth()!;
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty(),
   );
   const [editorContentLength, setEditorContentLength] = useState(0);
   const [rawContent, setRawContent] = useState<unknown>();
-  const {handleUpload, state, dispatch, cancelUpload, discardUpload} =
+  const { handleUpload, state, dispatch, cancelUpload, discardUpload } =
     useFireBaseUpload(user);
 
-  useEffect(() => {}, [user, state]);
+  useEffect(() => { }, [user, state]);
 
   useEffect(() => {
     const contentState = editorState.getCurrentContent();
@@ -54,43 +54,48 @@ const Upload = () => {
     if (editorContentLength && state.downloadURL) {
       setEditorState(() => EditorState.createEmpty());
       discardUpload();
-      dispatch({type: 'cancelUpload'});
+      dispatch({ type: 'cancelUpload' });
 
       console.log('editor cleared');
     }
   };
   return (
-    <Box px={20}>
-      ``
-      <Text> Upload video</Text>
-      <Text>Post a video to {user && user.userName}</Text>
-      <Flex justify="space-between" gap={20}>
-        <FileUpload
-          user={user}
-          handleUpload={handleUpload}
-          state={state}
-          cancelUpload={cancelUpload}
-          discardUpload={discardUpload}
-          dispatch={dispatch}
-        />
-        <Flex flexDirection="column">
-          <Text ml="auto">
-            {editorContentLength}/{150}
-          </Text>
-          <CaptionEditor
-            editorState={editorState}
-            setEditorState={setEditorState}
+    <Box px={20} mt={50} >
+
+      <Flex gap={20} justify="center">
+        <Box>
+          <Text fontSize="1.5rem" fontWeight="bold"> Upload video</Text>
+          <Text fontSize="1rem" mb={3}>Post a video to {user && user.userName}</Text>
+          <FileUpload
+            user={user}
+            handleUpload={handleUpload}
+            state={state}
+            cancelUpload={cancelUpload}
+            discardUpload={discardUpload}
+            dispatch={dispatch}
           />
+        </Box>
+        <Flex flexDirection="column" justify='space-between'>
+          <Box>
+            <Text textAlign='right'>
+              {editorContentLength}/{150}
+            </Text>
+            <CaptionEditor
+              editorState={editorState}
+              setEditorState={setEditorState}
+            />
+          </Box>
+          <Flex gap={5}>
+            <Button onClick={discardPostData} colorScheme="gray" variant="outline">
+              Discard
+            </Button>
+            <Button disabled={state.downloadURL ? false : true} onClick={postVideoData} colorScheme="green" variant="outline">
+              Post
+            </Button>
+          </Flex>
         </Flex>
       </Flex>
-      <Flex justify="flex-end" gap={5}>
-        <Button onClick={discardPostData} colorScheme="gray" variant="outline">
-          Discard
-        </Button>
-        <Button onClick={postVideoData} colorScheme="green" variant="outline">
-          Post
-        </Button>
-      </Flex>
+
     </Box>
   );
 };

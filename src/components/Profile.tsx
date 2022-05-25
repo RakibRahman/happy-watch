@@ -1,4 +1,4 @@
-import {Flex, Heading, Image, Spinner, Text} from '@chakra-ui/react';
+import { Flex, Heading, Image, Spinner, Text } from '@chakra-ui/react';
 import {
   collection,
   collectionGroup,
@@ -6,15 +6,16 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {fbFireStore} from '../lib/firebase';
-import {PostProps, User} from '../utils/types';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { fbFireStore } from '../lib/firebase';
+import { PostProps, User } from '../utils/types';
 const Profile = () => {
-  let {username} = useParams();
-
+  let { username } = useParams();
+  console.log(username);
   const [userInfo, setUserInfo] = useState<User | any>({});
   const [posts, setPosts] = useState<PostProps[] | any>([]);
+  const [likedPosts, setLikedPosts] = useState<any>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchUserData = async () => {
@@ -28,12 +29,11 @@ const Profile = () => {
     try {
       const querySnapshotUser = await getDocs(qUser);
       const querySnapshotPosts = await getDocs(qPosts);
-
-      const userData = querySnapshotUser.docs.map(doc => ({...doc.data()}));
+      const userData = querySnapshotUser.docs.map(doc => ({ ...doc.data() }));
 
       setUserInfo(userData[0]);
-      if (querySnapshotPosts.docs.length>0) {
-        setPosts(querySnapshotPosts.docs.map(doc => ({...doc.data()})));
+      if (querySnapshotPosts.docs.length > 0) {
+        setPosts(querySnapshotPosts.docs.map(doc => ({ ...doc.data() })));
       }
     } catch (error) {
       console.log(error);
@@ -46,6 +46,19 @@ const Profile = () => {
     fetchUserData();
   }, [username]);
 
+  const getUserLikedPosts = async () => {
+    const likedPosts = fbFireStore.collection('users')
+      .doc(userInfo.uid).collection("LikedPosts");
+
+    const querySnapshotLikedPosts = await getDocs(likedPosts);
+    const likedPostData = querySnapshotLikedPosts.docs.map(doc => ({ ...doc.data() }));
+    setLikedPosts(likedPostData);
+  }
+  useEffect(() => {
+
+    getUserLikedPosts();
+
+  }, [userInfo])
   return (
     userInfo && (
       <>
@@ -65,9 +78,11 @@ const Profile = () => {
               height="50px"
               borderRadius="50%"
             />
-            <Flex align="center" gap={1}>
+            <Flex flexDirection="column" gap={5} align="center">
               <Heading size="md">{userInfo.userName}</Heading>
               <Text size="sm">{userInfo.displayName}</Text>
+              <Text>Total posts:{posts.length}</Text>
+              <Text>Total liked posts:{likedPosts.length}</Text>
             </Flex>
           </Flex>
         )}

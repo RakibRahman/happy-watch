@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
-import { doc, getDoc, getDocs, collection, collectionGroup, where, query, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, setDoc, getDocs, collection, collectionGroup, where, query, updateDoc, deleteDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
 import { fbFireStore } from '../../lib/firebase';
 import { PostProps } from '../../utils/types';
 import { useAuth } from '../../context/AuthContext';
+import { nanoid } from 'nanoid';
 
 type Props = {
     post: PostProps
@@ -12,38 +13,50 @@ type Props = {
 const LikeButton: React.FC<Props> = ({ post }) => {
     const { user } = useAuth()!;
     if (!user) return null;
-    const [totalLikes, setTotalLikes] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
+    const [totalLikes, setTotalLikes] = useState<number>(0);
+    const [toggleLike, setToggleLike] = useState<boolean>(false);
     const [isLiked, setIsLiked] = useState(false);
-    const userPosts = fbFireStore.collection('users')
+    const userPost = fbFireStore.collection('users')
         .doc(post.user.uid).collection("posts").doc(post.postId);
+    let likedPostRef = doc(fbFireStore, 'users', `${user.uid}`, 'LikedPosts', post.postId);
 
     const addLike = async () => {
 
-        setLikeCount((prev) => prev + 1)
+        setToggleLike((prev) => !prev);
 
-        await userPosts.set({
+
+        await userPost.set({
             likedBy: arrayUnion(user.uid)
-        }, { merge: true })
+        }, { merge: true }).then(() => {
+            setIsLiked(true);
+            console.log('post liked')
+
+        })
             .catch((err) => {
                 console.log(err)
             })
-        setIsLiked(true);
-        console.log('post liked')
+
+
+        await setDoc(doc(fbFireStore, 'users', `${user.uid}`, 'LikedPosts', post.postId),
+            post
+        );
+
     };
 
     const removeLike = async () => {
 
-        setLikeCount(0);
+        setToggleLike((prev) => !prev);
 
-        await userPosts.set({
+        await userPost.set({
             likedBy: arrayRemove(user.uid)
-        }, { merge: true })
+        }, { merge: true }).then(() => {
+            console.log('post like removed')
+            setIsLiked(false);
+        })
             .catch((err) => {
                 console.log(err)
             })
-        console.log('post like removed')
-        setIsLiked(false);
+        await deleteDoc(likedPostRef);
 
     }
 
@@ -55,7 +68,7 @@ const LikeButton: React.FC<Props> = ({ post }) => {
         const docSnap = await getDocs(qPosts);
 
         let postData = docSnap.docs.map(doc => ({ ...doc.data() }));
-
+        console.log(postData)
         setTotalLikes(postData[0].likedBy.length);
         setIsLiked(post.likedBy.includes(user.uid));
 
@@ -63,10 +76,14 @@ const LikeButton: React.FC<Props> = ({ post }) => {
 
     useEffect(() => {
         updateLikeCount();
+        console.log('Toggle:', toggleLike);
+    }, [toggleLike]);
 
-    }, [likeCount]);
-
-  
+    // useEffect(() => {
+    //     fbFireStore.collection('users').doc(post.user.uid).collection("posts").onSnapshot((snapshot) => {
+    //         console.log(snapshot.docs);
+    //     });
+    // },[toggleLike])
     return (
         <Box fontSize="2rem">
             <Text>

@@ -69,7 +69,7 @@ export interface PostProps {
   user: User;
   timestamp: unknown;
   videoUrl: string;
-  likeCount: number;
+  likedBy: string[];
 }
 
 export type ACTIONTYPE =

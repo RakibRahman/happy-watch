@@ -44,7 +44,7 @@ const Upload = () => {
         user,
         audio_name: `original sound - ${user.userName}`,
         timestamp: fbTimestamp,
-        likeCount:0,
+        likedBy:[],
       });
     } else {
       ('no video data available');

@@ -1,7 +1,7 @@
-import {ReactNode} from 'react';
-import {User as FirebaseUser} from 'firebase/auth';
-import {DocumentReference} from 'firebase/firestore';
-import {UploadTask} from 'firebase/storage';
+import { ReactNode } from 'react';
+import { User as FirebaseUser } from 'firebase/auth';
+import { DocumentReference } from 'firebase/firestore';
+import { UploadTask } from 'firebase/storage';
 
 export interface Props {
   children?: ReactNode;
@@ -59,7 +59,7 @@ export type VideoPlayerProps = {
   isLoop?: boolean;
   autoPlay?: boolean;
   muted?: boolean;
-  videoRef?:any;
+  videoRef?: any;
 };
 
 export interface PostProps {
@@ -69,13 +69,14 @@ export interface PostProps {
   user: User;
   timestamp: unknown;
   videoUrl: string;
+  likeCount: number;
 }
 
 export type ACTIONTYPE =
-  | {type: 'isUploading'; payload: boolean}
-  | {type: 'progress'; payload: number}
-  | {type: 'file'; payload: File}
-  | {type: 'downloadLink'; payload: string}
-  | {type: 'uploadTask'; payload: any}
-  | {type: 'cancelUpload'}
-  | {type: 'getFullPath'; payload: string};
+  | { type: 'isUploading'; payload: boolean }
+  | { type: 'progress'; payload: number }
+  | { type: 'file'; payload: File }
+  | { type: 'downloadLink'; payload: string }
+  | { type: 'uploadTask'; payload: any }
+  | { type: 'cancelUpload' }
+  | { type: 'getFullPath'; payload: string };

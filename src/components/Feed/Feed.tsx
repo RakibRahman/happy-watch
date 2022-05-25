@@ -29,6 +29,7 @@ const Feed = () => {
     }
   };
 
+
   useEffect(() => {
 
     getPostData();
@@ -44,7 +45,7 @@ const Feed = () => {
                 thickness="30px"
                 speed="0.85s"
                 emptyColor="gray.400"
-                color="#FE2C55"
+                color="#ed627e"
                 size="xxl"
               />
           </Center>
@@ -62,8 +63,7 @@ const Feed = () => {
               <Flex  flexDirection='column' >
                 <UserInfo user={post.user} />
                 <FeedPost post={post} />
-                <Flex align="center" gap={3}>
-                </Flex>
+
               </Flex>
             </Flex>
   

@@ -9,7 +9,7 @@ export function formatDraftText({blocks, entityMap}: any) {
     const {data} = entityMap[range.key];
     // console.log(range);
     const start = caption.slice(0, range.offset);
-    const mention = `<a href="${data.mention.link}">${data.mention.name}</a>`;
+    const mention = `<a href="${data.mention.link}">@${data.mention.name}</a>`;
     const end = caption.slice(range.offset + range.length);
     caption = `${start}${mention}${end}`;
   });

@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
-import { DocumentReference } from 'firebase/firestore';
-import { UploadTask } from 'firebase/storage';
+import {ReactNode} from 'react';
+import {User as FirebaseUser} from 'firebase/auth';
+import {DocumentReference} from 'firebase/firestore';
+import {UploadTask} from 'firebase/storage';
 
 export interface Props {
   children?: ReactNode;
@@ -73,10 +73,10 @@ export interface PostProps {
 }
 
 export type ACTIONTYPE =
-  | { type: 'isUploading'; payload: boolean }
-  | { type: 'progress'; payload: number }
-  | { type: 'file'; payload: File }
-  | { type: 'downloadLink'; payload: string }
-  | { type: 'uploadTask'; payload: any }
-  | { type: 'cancelUpload' }
-  | { type: 'getFullPath'; payload: string };
+  | {type: 'isUploading'; payload: boolean}
+  | {type: 'progress'; payload: number}
+  | {type: 'file'; payload: File}
+  | {type: 'downloadLink'; payload: string}
+  | {type: 'uploadTask'; payload: any}
+  | {type: 'cancelUpload'}
+  | {type: 'getFullPath'; payload: string};

@@ -1,8 +1,8 @@
-import { Box, Button, useToast } from '@chakra-ui/react';
+import {Box, Button, useToast} from '@chakra-ui/react';
 import Editor from '@draft-js-plugins/editor';
-import createMentionPlugin, { MentionData } from '@draft-js-plugins/mention';
-import { DraftHandleValue, EditorState, Modifier } from 'draft-js';
-import { getDocs } from 'firebase/firestore';
+import createMentionPlugin, {MentionData} from '@draft-js-plugins/mention';
+import {DraftHandleValue, EditorState, Modifier} from 'draft-js';
+import {getDocs} from 'firebase/firestore';
 import React, {
   Dispatch,
   ReactElement,
@@ -11,10 +11,10 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
-import { insertCharacter } from '../../../lib/draft-utils';
-import { fbFireStore } from '../../../lib/firebase';
+import {insertCharacter} from '../../../lib/draft-utils';
+import {fbFireStore} from '../../../lib/firebase';
 import editorStyles from './CustomMentionEditor.module.css';
 import mentionsStyles from './MentionsStyles.module.css';
 

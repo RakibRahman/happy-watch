@@ -44,7 +44,7 @@ const Upload = () => {
         user,
         audio_name: `original sound - ${user.userName}`,
         timestamp: fbTimestamp,
-        likedBy:[],
+        likedBy: [],
       });
     } else {
       ('no video data available');
@@ -61,12 +61,16 @@ const Upload = () => {
     }
   };
   return (
-    <Box px={20} mt={50} >
-
+    <Box px={20} mt={50}>
       <Flex gap={20} justify="center">
         <Box>
-          <Text fontSize="1.5rem" fontWeight="bold"> Upload video</Text>
-          <Text fontSize="1rem" mb={3}>Post a video to {user && user.userName}</Text>
+          <Text fontSize="1.5rem" fontWeight="bold">
+            {' '}
+            Upload video
+          </Text>
+          <Text fontSize="1rem" mb={3}>
+            Post a video to {user && user.userName}
+          </Text>
           <FileUpload
             user={user}
             handleUpload={handleUpload}
@@ -76,9 +80,9 @@ const Upload = () => {
             dispatch={dispatch}
           />
         </Box>
-        <Flex flexDirection="column" justify='space-between'>
+        <Flex flexDirection="column" justify="space-between">
           <Box>
-            <Text textAlign='right'>
+            <Text textAlign="right">
               {editorContentLength}/{150}
             </Text>
             <CaptionEditor
@@ -87,16 +91,24 @@ const Upload = () => {
             />
           </Box>
           <Flex gap={5}>
-            <Button onClick={discardPostData} colorScheme="gray" variant="outline">
+            <Button
+              onClick={discardPostData}
+              colorScheme="gray"
+              variant="outline"
+            >
               Discard
             </Button>
-            <Button disabled={state.downloadURL ? false : true} onClick={postVideoData} colorScheme="green" variant="outline">
+            <Button
+              disabled={state.downloadURL ? false : true}
+              onClick={postVideoData}
+              colorScheme="green"
+              variant="outline"
+            >
               Post
             </Button>
           </Flex>
         </Flex>
       </Flex>
-
     </Box>
   );
 };

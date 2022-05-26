@@ -1,77 +1,103 @@
-import React, { useState, useEffect } from 'react'
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { FcLike, FcLikePlaceholder } from "react-icons/fc";
-import { doc, setDoc, getDocs, collection, collectionGroup, where, query, updateDoc, deleteDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
+import { Box, Text } from '@chakra-ui/react';
+import {
+    arrayRemove,
+    arrayUnion,
+    collectionGroup,
+    deleteDoc,
+    doc,
+    getDocs,
+    query,
+    setDoc,
+    where,
+} from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { FcLike, FcLikePlaceholder } from 'react-icons/fc';
+import { useAuth } from '../../context/AuthContext';
 import { fbFireStore } from '../../lib/firebase';
 import { PostProps } from '../../utils/types';
-import { useAuth } from '../../context/AuthContext';
-import { nanoid } from 'nanoid';
 
 type Props = {
-    post: PostProps
-}
+    post: PostProps;
+};
 const LikeButton: React.FC<Props> = ({ post }) => {
     const { user } = useAuth()!;
     if (!user) return null;
     const [totalLikes, setTotalLikes] = useState<number>(0);
     const [toggleLike, setToggleLike] = useState<boolean>(false);
     const [isLiked, setIsLiked] = useState(false);
-    const userPost = fbFireStore.collection('users')
-        .doc(post.user.uid).collection("posts").doc(post.postId);
-    let likedPostRef = doc(fbFireStore, 'users', `${user.uid}`, 'LikedPosts', post.postId);
+    const userPost = fbFireStore
+        .collection('users')
+        .doc(post.user.uid)
+        .collection('posts')
+        .doc(post.postId);
+    let likedPostRef = doc(
+        fbFireStore,
+        'users',
+        `${user.uid}`,
+        'LikedPosts',
+        post.postId,
+    );
 
     const addLike = async () => {
+        setToggleLike(true);
 
-        setToggleLike((prev) => !prev);
-
-
-        await userPost.set({
-            likedBy: arrayUnion(user.uid)
-        }, { merge: true }).then(() => {
-            setIsLiked(true);
-            console.log('post liked')
-
-        })
-            .catch((err) => {
-                console.log(err)
+        const like = userPost
+            .set(
+                {
+                    likedBy: arrayUnion(user.uid),
+                },
+                { merge: true },
+            )
+            .then(() => {
+                setIsLiked(true);
+                console.log('post liked');
             })
+            .catch(err => {
+                console.log(err);
+            });
 
-
-        await setDoc(doc(fbFireStore, 'users', `${user.uid}`, 'LikedPosts', post.postId),
-            post
+        const likedPost = setDoc(
+            doc(fbFireStore, 'users', `${user.uid}`, 'LikedPosts', post.postId),
+            post,
         );
+
+        const [liked, posts] = await Promise.all([like, likedPost]);
 
     };
 
     const removeLike = async () => {
+        setToggleLike(false);
 
-        setToggleLike((prev) => !prev);
+        const remove = userPost
+            .set(
+                {
+                    likedBy: arrayRemove(user.uid),
+                },
+                { merge: true },
+            )
+            .then(() => {
+                console.log('post like removed');
+                setIsLiked(false);
 
-        await userPost.set({
-            likedBy: arrayRemove(user.uid)
-        }, { merge: true }).then(() => {
-            console.log('post like removed')
-            setIsLiked(false);
-        })
-            .catch((err) => {
-                console.log(err)
             })
-        await deleteDoc(likedPostRef);
+            .catch(err => {
+                console.log(err);
+            });
+        const deletePost = deleteDoc(likedPostRef);
 
-    }
+        const [rm, del] = await Promise.all([remove, deletePost]);
+    };
 
     const updateLikeCount = async () => {
-
-        const postRef = collectionGroup(fbFireStore, "posts",);
+        const postRef = collectionGroup(fbFireStore, 'posts');
         const qPosts = query(postRef, where('postId', '==', post.postId));
 
         const docSnap = await getDocs(qPosts);
 
         let postData = docSnap.docs.map(doc => ({ ...doc.data() }));
-        console.log(postData)
+        console.log(postData);
         setTotalLikes(postData[0].likedBy.length);
         setIsLiked(post.likedBy.includes(user.uid));
-
     };
 
     useEffect(() => {
@@ -86,24 +112,15 @@ const LikeButton: React.FC<Props> = ({ post }) => {
     // },[toggleLike])
     return (
         <Box fontSize="2rem">
-            <Text>
-                {totalLikes}
-            </Text>
+            <Text>{totalLikes}</Text>
 
-
-
-            {isLiked ?
-
-
+            {isLiked ? (
                 <FcLike onClick={removeLike} />
-                :
+            ) : (
                 <FcLikePlaceholder onClick={addLike} />
-
-            }
-
-
+            )}
         </Box>
-    )
-}
+    );
+};
 
 export default LikeButton;

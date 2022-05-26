@@ -30,11 +30,9 @@ const EmailLogIn = () => {
 
   return (
     <Box>
-      <Text
-       fontWeight='bold'
-       fontSize='1.2rem'
-       mb={3}
-      >Log In</Text>
+      <Text fontWeight="bold" fontSize="1.2rem" mb={3}>
+        Log In
+      </Text>
       <Stack as="form" spacing="10px" onSubmit={submitHandler}>
         <Input
           required
@@ -61,13 +59,17 @@ const EmailLogIn = () => {
           type="submit"
           color={theme.colorWhite}
           bg={theme.colorRed}
-         
         >
           LogIn
         </Button>
       </Stack>
       <Link to="/signup">
-        <Text my={3} fontSize="1rem">Need Account?<Text as='span' color={theme.colorRed} ml={2}>Sign Up</Text></Text>
+        <Text my={3} fontSize="1rem">
+          Need Account?
+          <Text as="span" color={theme.colorRed} ml={2}>
+            Sign Up
+          </Text>
+        </Text>
       </Link>
     </Box>
   );

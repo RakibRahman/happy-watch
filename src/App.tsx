@@ -20,7 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Feed />} />
           <Route path="/upload" element={<Upload />} />
-          <Route path="/:username/video/:postId" element={<VideoPost />} />
+          {/* <Route path="/:username/video/:postId" element={<VideoPost />} /> */}
           <Route path="/:username" element={<Profile />} />
           <Route path="*" element={<Notfound />} />
         </Routes>

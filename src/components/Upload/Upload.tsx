@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import FileUpload from './FileUpload';
-import { Box, Text, Flex, Button } from '@chakra-ui/react';
-import { useAuth } from '../../context/AuthContext';
+import {Box, Text, Flex, Button} from '@chakra-ui/react';
+import {useAuth} from '../../context/AuthContext';
 import useFireBaseUpload from '../../hooks/useFirebaseUpload';
 import CaptionEditor from './Editor/CaptionEditor';
-import { theme } from '../../utils/theme';
+import {theme} from '../../utils/theme';
 // import { EditorState } from 'draft-js';
-import { EditorState, convertToRaw } from 'draft-js';
-import { doc, setDoc } from 'firebase/firestore';
-import { fbFireStore, fbTimestamp } from '../../lib/firebase';
-import { nanoid } from 'nanoid';
+import {EditorState, convertToRaw} from 'draft-js';
+import {doc, setDoc} from 'firebase/firestore';
+import {fbFireStore, fbTimestamp} from '../../lib/firebase';
+import {nanoid} from 'nanoid';
 const Upload = () => {
-  const { user } = useAuth()!;
+  const {user} = useAuth()!;
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty(),
   );
   const [editorContentLength, setEditorContentLength] = useState(0);
   const [rawContent, setRawContent] = useState<unknown>();
-  const { handleUpload, state, dispatch, cancelUpload, discardUpload } =
+  const {handleUpload, state, dispatch, cancelUpload, discardUpload} =
     useFireBaseUpload(user);
 
-  useEffect(() => { }, [user, state]);
+  useEffect(() => {}, [user, state]);
 
   useEffect(() => {
     const contentState = editorState.getCurrentContent();
@@ -55,7 +55,7 @@ const Upload = () => {
     if (editorContentLength && state.downloadURL) {
       setEditorState(() => EditorState.createEmpty());
       discardUpload();
-      dispatch({ type: 'cancelUpload' });
+      dispatch({type: 'cancelUpload'});
 
       console.log('editor cleared');
     }

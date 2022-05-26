@@ -1,4 +1,4 @@
-import {Box, Text} from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import {
   arrayRemove,
   arrayUnion,
@@ -10,17 +10,17 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import React, {useEffect, useState} from 'react';
-import {FcLike, FcLikePlaceholder} from 'react-icons/fc';
-import {useAuth} from '../../context/AuthContext';
-import {fbFireStore} from '../../lib/firebase';
-import {PostProps} from '../../utils/types';
+import React, { useEffect, useState } from 'react';
+import { FcLike, FcLikePlaceholder } from 'react-icons/fc';
+import { useAuth } from '../../context/AuthContext';
+import { fbFireStore } from '../../lib/firebase';
+import { PostProps } from '../../utils/types';
 
 type Props = {
   post: PostProps;
 };
-const LikeButton: React.FC<Props> = ({post}) => {
-  const {user} = useAuth()!;
+const LikeButton: React.FC<Props> = ({ post }) => {
+  const { user } = useAuth()!;
   if (!user) return null;
   const [totalLikes, setTotalLikes] = useState<number>(0);
   const [toggleLike, setToggleLike] = useState<boolean>(false);
@@ -46,7 +46,7 @@ const LikeButton: React.FC<Props> = ({post}) => {
         {
           likedBy: arrayUnion(user.uid),
         },
-        {merge: true},
+        { merge: true },
       )
       .then(() => {
         setIsLiked(true);
@@ -61,7 +61,9 @@ const LikeButton: React.FC<Props> = ({post}) => {
       post,
     );
 
-    const [liked, posts] = await Promise.all([like, likedPost]);
+    const responses = await Promise.allSettled([like, likedPost]);
+
+    console.log(responses);
   };
 
   const removeLike = async () => {
@@ -72,7 +74,7 @@ const LikeButton: React.FC<Props> = ({post}) => {
         {
           likedBy: arrayRemove(user.uid),
         },
-        {merge: true},
+        { merge: true },
       )
       .then(() => {
         console.log('post like removed');
@@ -92,7 +94,7 @@ const LikeButton: React.FC<Props> = ({post}) => {
 
     const docSnap = await getDocs(qPosts);
 
-    let postData = docSnap.docs.map(doc => ({...doc.data()}));
+    let postData = docSnap.docs.map(doc => ({ ...doc.data() }));
     console.log(postData);
     setTotalLikes(postData[0].likedBy.length);
     setIsLiked(post.likedBy.includes(user.uid));
